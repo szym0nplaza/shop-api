@@ -1,4 +1,5 @@
 class Singleton(type):
+    """Ensures that only one instance of class is used"""
     _instances = {}
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:

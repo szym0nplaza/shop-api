@@ -1,5 +1,5 @@
 from logging.config import fileConfig
-from config.settings import settings
+from config.settings import settings, DBSession
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
@@ -19,8 +19,8 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
-config.set_main_option("sqlalchemy.url", settings.get_db_string())
+target_metadata = DBSession.base
+config.set_main_option("sqlalchemy.url", settings.db_string)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
