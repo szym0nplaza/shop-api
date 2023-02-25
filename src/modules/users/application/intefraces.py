@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from modules.users.domain.models import User
-from .dto import UpdateUserDTO
+from typing import Tuple
 
 
 class IUserRepository(ABC):
@@ -12,13 +12,18 @@ class IUserRepository(ABC):
 
     @abstractmethod
     def add_user(self, user: User) -> None:
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def get_user(self, id: int) -> User:
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def get_user_by_email(self, email: str) -> User:
-        pass
+        raise NotImplementedError
 
+
+class IAuthModule(ABC):
+    @abstractmethod
+    def create_tokens(self, email: str) -> Tuple[str, str]:
+        raise NotImplementedError

@@ -31,7 +31,6 @@ class DBSession:
     Handles base db configuration and session access in repos \n
     `get_session` method returns session for performing db operations
     """
-    __metaclass__ = Singleton
 
     _session = sessionmaker(bind=create_engine(settings.db_string))
     base = declarative_base()
