@@ -1,7 +1,7 @@
 from config.settings import DBSession
 from modules.users.domain import models, value_objects
 from sqlalchemy import Column, Integer, String, LargeBinary
-from sqlalchemy.orm.mapper import Mapper
+from sqlalchemy.orm import mapper
 
 
 class User(DBSession.base):
@@ -15,4 +15,4 @@ class User(DBSession.base):
     group = Column(String)
 
 
-Mapper(models.User, User)
+mapper(models.User, User)

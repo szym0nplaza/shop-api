@@ -36,9 +36,8 @@ class DBSession:
     _session = sessionmaker(bind=create_engine(settings.db_string))
     base = declarative_base()
 
-    @classmethod
-    def get_session(cls) -> Union[Session, None]:
-        session = cls._session()
+    def get_session(self) -> Union[Session, None]:
+        session = self._session()
         try:
             return session
         except:

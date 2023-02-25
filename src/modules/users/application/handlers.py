@@ -8,7 +8,7 @@ class UserHandler:
     def __init__(self, repo: IUserRepository) -> None:
         self._repo = repo
 
-    def add_user(self, dto: RegisterUserDTO) ->UserDTO:
+    def add_user(self, dto: RegisterUserDTO) -> UserDTO:
         with self._repo:
             user = User(
                 email=dto.email,
@@ -18,7 +18,8 @@ class UserHandler:
                 group=dto.group
             )
             self._repo.add_user(user)
-        return UserDTO(**user.__dict__)
+            user = self._repo.get_user_by_email(dto.email)
+            return UserDTO(**user.__dict__)
 
     def get_user(self, id: int) -> UserDTO:
         with self._repo:
