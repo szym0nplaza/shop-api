@@ -18,3 +18,7 @@ class IUserRepository(ABC):
     def get_user(self, id: int) -> User:
         pass
 
+    @abstractmethod
+    def get_user_by_email(self, email: str) -> User:
+        pass
+

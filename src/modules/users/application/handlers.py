@@ -1,7 +1,7 @@
 from .intefraces import IUserRepository
 from modules.users.domain.models import User
 from modules.users.domain.value_objects import Password
-from .dto import RegisterUserDTO, UserDTO, UpdateUserDTO, UpdatePasswordDTO
+from .dto import RegisterUserDTO, UserDTO, UpdateUserDTO, ChangePasswordDTO, LoginDTO
 
 
 class UserHandler:
@@ -30,7 +30,17 @@ class UserHandler:
             user: User = self._repo.get_user(dto.id)
             user.update_data(dto)
 
-    def change_password(self, dto: UpdatePasswordDTO) -> None:
+    def change_password(self, dto: ChangePasswordDTO) -> None:
         with self._repo:
             user: User = self._repo.get_user(dto.id)
             user.change_password(dto.new_password)
+
+
+class AuthHandler:
+    def __init__(self, repo: IUserRepository) -> None:
+        self._repo = repo
+
+    def check_password(self, dto: LoginDTO) -> bool:
+        with self._repo:
+            user: User = self._repo.get_user_by_email(dto.email)
+            return user.check_passwords(dto.given_password)

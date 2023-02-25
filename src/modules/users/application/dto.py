@@ -23,8 +23,11 @@ class UpdateUserDTO(BaseModel):
     name: str
     surname: str
     group: str
-    password: str
 
-class UpdatePasswordDTO(BaseModel):
+class ChangePasswordDTO(BaseModel):
     id: int
     new_password: str
+
+class LoginDTO(BaseModel):
+    email: str
+    given_password: str

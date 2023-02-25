@@ -18,7 +18,11 @@ class User(Entity):
         _hashed_password = Password(value=new_password).hashed_value
         if self.password == _hashed_password:
             raise ValueError("Passwords are the same!")
-        self.password = _hashed_password 
+        self.password = _hashed_password
+
+    def check_passwords(self, given_password: str):
+        _hashed_password = Password(value=given_password).hashed_value
+        return self.password == _hashed_password
 
     def update_data(self, dto):
         for field in self.__dict__.keys():
