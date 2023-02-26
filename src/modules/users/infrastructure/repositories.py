@@ -1,7 +1,6 @@
 from modules.users.application.intefraces import IUserRepository
 from modules.users.domain.models import User, Group
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
 from config.settings import DBSession
 from typing import List
 
