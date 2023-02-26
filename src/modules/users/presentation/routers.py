@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Security
 from fastapi.responses import JSONResponse
+from sqlalchemy.exc import IntegrityError
+from fastapi.exceptions import HTTPException
 from modules.users.infrastructure.repositories import UserRepository
 from modules.users.infrastructure.auth import AuthModule
 from modules.users.application.handlers import UserHandler, AuthHandler
@@ -9,6 +11,7 @@ from modules.users.application.dto import (
     UpdateUserDTO,
     ChangePasswordDTO,
     LoginDTO,
+    GroupDTO
 )
 from base.auth import check_access
 
@@ -33,15 +36,46 @@ async def login(dto: LoginDTO):
     dependencies=[Security(check_access, scopes=["view_user"])],
 )
 async def get_user(id: int):
-    repo = UserHandler(repo=UserRepository())
-    response = repo.get_user(id)
+    handler = UserHandler(repo=UserRepository())
+    response = handler.get_user(id)
+    return response
+
+
+@router.get(
+    "/groups",
+    dependencies=[Security(check_access, scopes=["view_group"])],
+)
+async def get_groups():
+    handler = AuthHandler(repo=UserRepository(), auth=AuthModule())
+    response = handler.get_groups()
+    return response
+
+@router.get(
+    "/perms-list",
+    dependencies=[Security(check_access, scopes=["view_group"])],
+)
+async def get_perms_list():
+    handler = AuthHandler(repo=UserRepository(), auth=AuthModule())
+    response = handler.get_perms()
+    return response
+
+@router.patch(
+    "/groups/{name}",
+    dependencies=[Security(check_access, scopes=["manage_group"])],
+)
+async def update_group(dto: GroupDTO):
+    handler = AuthHandler(repo=UserRepository(), auth=AuthModule())
+    response = handler.modify_group(dto)
     return response
 
 
 @router.post("/create-user", response_model=UserDTO)
 async def create_user(dto: RegisterUserDTO):
-    repo = UserHandler(repo=UserRepository())
-    response = repo.add_user(dto)
+    handler = UserHandler(repo=UserRepository())
+    try:
+        response = handler.add_user(dto)
+    except IntegrityError:
+        raise HTTPException(detail="Provided group name not found.", status_code=404)
     return response
 
 
@@ -51,8 +85,8 @@ async def create_user(dto: RegisterUserDTO):
     dependencies=[Security(check_access, scopes=["manage_user"])],
 )
 async def update_user(dto: UpdateUserDTO):
-    repo = UserHandler(repo=UserRepository())
-    response = repo.update_user(dto)
+    handler = UserHandler(repo=UserRepository())
+    response = handler.update_user(dto)
     return response
 
 
@@ -60,9 +94,9 @@ async def update_user(dto: UpdateUserDTO):
     "/change-password", dependencies=[Security(check_access, scopes=["manage_user"])]
 )
 async def change_password(dto: ChangePasswordDTO):
-    repo = UserHandler(repo=UserRepository())
+    handler = UserHandler(repo=UserRepository())
     try:
-        repo.change_password(dto)
+        handler.change_password(dto)
         return JSONResponse({"message": "Password changed."}, status_code=200)
     except ValueError as e:
         return JSONResponse({"message": str(e)}, status_code=200)

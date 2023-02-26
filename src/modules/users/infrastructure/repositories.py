@@ -1,7 +1,9 @@
 from modules.users.application.intefraces import IUserRepository
-from modules.users.domain.models import User
+from modules.users.domain.models import User, Group
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from config.settings import DBSession
+from typing import List
 
 
 class UserRepository(IUserRepository):
@@ -28,4 +30,12 @@ class UserRepository(IUserRepository):
     
     def get_user_by_email(self, email: str) -> User:
         result = self._session.query(User).filter_by(email=email).first()
+        return result
+    
+    def get_groups(self) -> List[Group]:
+        result = self._session.query(Group).all()
+        return result
+    
+    def get_group_by_name(self, name: str) -> Group:
+        result = self._session.query(Group).filter_by(name=name).first()
         return result

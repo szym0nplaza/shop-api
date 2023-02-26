@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from modules.users.domain.models import User
-from typing import Tuple
+from modules.users.domain.models import User, Group
+from typing import Tuple, List
 
 
 class IUserRepository(ABC):
@@ -20,6 +20,14 @@ class IUserRepository(ABC):
 
     @abstractmethod
     def get_user_by_email(self, email: str) -> User:
+        raise NotImplementedError
+    
+    @abstractmethod
+    def get_groups(self) -> List[Group]:
+        raise NotImplementedError
+    
+    @abstractmethod
+    def get_group_by_name(self, name: str) -> Group:
         raise NotImplementedError
 
 

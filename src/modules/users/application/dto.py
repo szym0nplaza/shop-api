@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List
 
 
 class RegisterUserDTO(BaseModel):
@@ -24,10 +25,17 @@ class UpdateUserDTO(BaseModel):
     surname: str
     group: str
 
+
 class ChangePasswordDTO(BaseModel):
     id: int
     new_password: str
 
+
 class LoginDTO(BaseModel):
     email: str
     given_password: str
+
+
+class GroupDTO(BaseModel):
+    name: str
+    perms: List[str]

@@ -9,6 +9,7 @@ from modules.users.application.dto import (
 from .conftest import MockUserRepo, MockAuthModule
 from copy import deepcopy
 from typing import Dict, Any
+from config.settings import POSSIBLE_PERMS
 
 
 class TestUserHandler:
@@ -67,3 +68,12 @@ class TestUserHandler:
         dto = LoginDTO(email="test2@testmail.com", given_password="n3WP@ssword")
 
         assert self._auth_handler.check_password(dto)
+
+    def test_group_get(self):
+        result = self._auth_handler.get_groups()[0]
+        assert result.name == "admin"
+        assert result.perms == ["__all__"]
+
+    def test_perms_get(self):
+        result = self._auth_handler.get_perms()
+        assert result == POSSIBLE_PERMS

@@ -7,6 +7,7 @@ from typing import Union
 
 class Settings(BaseSettings):
     """Base settings class"""
+
     __metaclass__ = Singleton
 
     db_name: str = Field(env="DB_NAME")
@@ -44,3 +45,14 @@ class DBSession:
         finally:
             session.close()
 
+
+POSSIBLE_PERMS = (
+    "view_user",
+    "manage_user",
+    "view_order",
+    "manage_order",
+    "view_product",
+    "manage_product",
+    "manage_group",
+    "view_group",
+)
