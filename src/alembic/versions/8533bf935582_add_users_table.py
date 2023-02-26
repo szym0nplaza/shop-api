@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '8533bf935582'
+revision = "8533bf935582"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -18,15 +18,30 @@ depends_on = None
 
 def upgrade() -> None:
     op.create_table(
-        'users',
-        sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column('name', sa.String(50), nullable=False),
-        sa.Column('surname', sa.String(50), nullable=False),
-        sa.Column('email', sa.String(100), nullable=False, unique=True),
-        sa.Column('group', sa.String(30), nullable=True),
-        sa.Column('password', sa.LargeBinary(), nullable=False),
+        "groups",
+        sa.Column("name", sa.String(50), unique=True, primary_key=True),
+        sa.Column(
+            "perms",
+            sa.String(1000),
+        ),
+    )
+
+    op.execute(
+        "INSERT INTO groups (name, perms) VALUES ('admin', '__all__'), ('seller', 'manage_product,view_product,manage_user,view_user'), ('customer', 'manage_order,view_order,manage_user,view_user')"
+    )
+
+    op.create_table(
+        "users",
+        sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
+        sa.Column("name", sa.String(50), nullable=False),
+        sa.Column("surname", sa.String(50), nullable=False),
+        sa.Column("email", sa.String(100), nullable=False, unique=True),
+        sa.Column("group", sa.String(30), nullable=True),
+        sa.Column("password", sa.LargeBinary(), nullable=False),
+        sa.ForeignKeyConstraint(["group"], ["groups.name"], ondelete="CASCADE"),
     )
 
 
 def downgrade() -> None:
     op.drop_table("users")
+    op.drop_table("groups")

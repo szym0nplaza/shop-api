@@ -6,6 +6,12 @@ from typing import Union
 
 
 @dataclass
+class Group(Entity):
+    name: str
+    perms: str
+
+
+@dataclass
 class User(Entity):
     email: str  # Later we should add value object for this
     name: str

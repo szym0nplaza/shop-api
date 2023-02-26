@@ -1,4 +1,4 @@
-from modules.users.application.intefraces import IUserRepository
+from modules.users.application.intefraces import IUserRepository, IAuthModule
 from modules.users.domain.models import User
 
 
@@ -10,6 +10,11 @@ def id_generator():
 
 
 ids = id_generator()
+
+
+class MockAuthModule(IAuthModule):
+    def create_tokens(self, email: str):
+        pass
 
 
 class MockUserRepo(IUserRepository):

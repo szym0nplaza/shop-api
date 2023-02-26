@@ -1,7 +1,14 @@
 from config.settings import DBSession
 from modules.users.domain import models, value_objects
-from sqlalchemy import Column, Integer, String, LargeBinary
-from sqlalchemy.orm import mapper
+from sqlalchemy import Column, Integer, String, LargeBinary, ARRAY, ForeignKey
+from sqlalchemy.orm import mapper, relationship
+
+
+class Group(DBSession.base):
+    __tablename__ = "groups"
+
+    name = Column(String, primary_key=True, unique=True)
+    perms = Column(String)
 
 
 class User(DBSession.base):
@@ -12,7 +19,8 @@ class User(DBSession.base):
     surname = Column(String)
     email = Column(String)
     password = Column(LargeBinary)
-    group = Column(String)
+    group = Column(String, ForeignKey(Group.name), nullable=True)
 
 
 mapper(models.User, User)
+mapper(models.Group, Group)

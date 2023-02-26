@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Security
 from fastapi.responses import JSONResponse
 from modules.users.infrastructure.repositories import UserRepository
 from modules.users.infrastructure.auth import AuthModule
@@ -8,8 +8,9 @@ from modules.users.application.dto import (
     UserDTO,
     UpdateUserDTO,
     ChangePasswordDTO,
-    LoginDTO
+    LoginDTO,
 )
+from base.auth import check_access
 
 
 users_router = router = APIRouter()
@@ -21,12 +22,16 @@ async def login(dto: LoginDTO):
     auth_handler.check_password(dto)
     access_token, refresh_token = auth_handler.login(dto)
     response = JSONResponse({"message": "Successfully logged in."})
-    response.set_cookie(key="access_token", value=access_token)
-    response.set_cookie(key="refresh_token", value=refresh_token)
+    response.set_cookie(key="access_token", value=access_token, httponly=True)
+    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
     return response
 
 
-@router.get("/get-user/{id}", response_model=UserDTO)
+@router.get(
+    "/users/{id}",
+    response_model=UserDTO,
+    dependencies=[Security(check_access, scopes=["view_user"])],
+)
 async def get_user(id: int):
     repo = UserHandler(repo=UserRepository())
     response = repo.get_user(id)
@@ -40,14 +45,20 @@ async def create_user(dto: RegisterUserDTO):
     return response
 
 
-@router.patch("/update-user", response_model=UserDTO)
+@router.patch(
+    "/update-user",
+    response_model=UserDTO,
+    dependencies=[Security(check_access, scopes=["manage_user"])],
+)
 async def update_user(dto: UpdateUserDTO):
     repo = UserHandler(repo=UserRepository())
     response = repo.update_user(dto)
     return response
 
 
-@router.patch("/change-password")
+@router.patch(
+    "/change-password", dependencies=[Security(check_access, scopes=["manage_user"])]
+)
 async def change_password(dto: ChangePasswordDTO):
     repo = UserHandler(repo=UserRepository())
     try:

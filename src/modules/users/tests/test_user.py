@@ -6,14 +6,14 @@ from modules.users.application.dto import (
     ChangePasswordDTO,
     LoginDTO,
 )
-from .conftest import MockUserRepo
+from .conftest import MockUserRepo, MockAuthModule
 from copy import deepcopy
 from typing import Dict, Any
 
 
 class TestUserHandler:
     _user_handler = UserHandler(repo=MockUserRepo())
-    _auth_handler = AuthHandler(repo=MockUserRepo())
+    _auth_handler = AuthHandler(repo=MockUserRepo(), auth=MockAuthModule())
     _data_dict: Dict[str, Any] = {
         "email": "test@testmail.com",
         "name": "Test",
