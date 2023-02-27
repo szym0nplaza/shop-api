@@ -108,7 +108,10 @@ async def get_order(id: int):
 @orders_router.patch("/orders")
 async def update_order(dto: OrderDTO):
     handler = OrderHandler(repo=OrderRepository())
-    handler.udpate_order(dto)
+    try:
+        handler.udpate_order(dto)
+    except ValueError:
+        return JSONResponse({"detail": str(e)}, status_code=422)
     return JSONResponse({"message": "Order updated"}, status_code=200)
 
 

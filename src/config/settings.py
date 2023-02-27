@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     db_host: str = Field(env="DB_HOST")
     db_user: str = Field(env="DB_USER")
     db_password: str = Field(env="DB_PASSWORD")
+    application_host: str = Field(env="APPLICATION_HOST")
     password_salt: str = Field(env="SALT")
 
     @property

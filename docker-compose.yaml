@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    container_name: 'db'
+    environment: 
+        - POSTGRES_DB=shopapi
+        - POSTGRES_USER=root
+        - POSTGRES_PASSWORD=qwerty
+
+  web:
+    build: .
+    command: python src/main.py
+    depends_on:
+      - db
+    environment:
+      PYTHONPATH: .src
+    volumes:
+      - .:/src
+    ports:
+      - "8000:8000"

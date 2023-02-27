@@ -1,6 +1,6 @@
 from .interfaces import IOrderRepository, IProductRepository
 from .dto import ProductDTO, CreateProductDTO, OrderDTO, CreateOrderDTO
-from modules.products.domain.models import Product, Order
+from modules.products.domain.models import Product, Order, Status
 
 
 class ProductHandler:
@@ -63,6 +63,10 @@ class OrderHandler:
         
     def udpate_order(self, dto: OrderDTO):
         with self._repo:
+            if dto.status == Status.declined:
+                order: Order = self._repo.get_order(dto.id)
+                order.check_possibility_to_delete()
+
             order: Order = self._repo.get_order(dto.id)
             order.update_data(dto)
 
