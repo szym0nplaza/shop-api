@@ -1,6 +1,6 @@
 from .interfaces import IOrderRepository, IProductRepository
-from .dto import ProductDTO, CreateProductDTO
-from modules.products.domain.models import Product
+from .dto import ProductDTO, CreateProductDTO, OrderDTO, CreateOrderDTO
+from modules.products.domain.models import Product, Order
 
 
 class ProductHandler:
@@ -9,7 +9,8 @@ class ProductHandler:
 
     def add_product(self, dto: CreateProductDTO):
         with self._repo:
-            self._repo.add_product(dto)
+            instance = Product(**dto.__dict__)
+            self._repo.add_product(instance)
 
     def get_product(self, id: int):
         with self._repo:
@@ -37,4 +38,37 @@ class ProductHandler:
     def delete_product(self, id: int):
         with self._repo:
             self._repo.delete_product(id)
+
+
+class OrderHandler:
+    def __init__(self, repo: IOrderRepository) -> None:
+        self._repo = repo
+
+    def add_order(self, dto: CreateOrderDTO):
+        with self._repo:
+            instance = Order(**dto.__dict__)
+            self._repo.add_order(instance)
+
+    def get_order(self, id: int):
+        with self._repo:
+            record = self._repo.get_order(id)
+            result = OrderDTO(**record.__dict__)
+            return result
+        
+    def get_orders(self, user_id: int):
+        with self._repo:
+            qs = self._repo.get_orders(user_id)
+            result = [OrderDTO(**record.__dict__) for record in qs]
+            return result
+        
+    def udpate_order(self, dto: OrderDTO):
+        with self._repo:
+            order: Order = self._repo.get_order(dto.id)
+            order.update_data(dto)
+
+    def delete_order(self, id: int):
+        with self._repo:
+            order: Order = self._repo.get_order(id)
+            order.check_possibility_to_delete()
+            self._repo.delete_order(id)
 

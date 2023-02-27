@@ -45,3 +45,9 @@ class IOrderRepository(ABC):
     @abstractmethod
     def delete_order(self, id: int):
         raise NotImplementedError
+
+
+class IPaymentGateway(ABC):
+    @abstractmethod
+    def handle_payment(self):
+        raise NotImplementedError
