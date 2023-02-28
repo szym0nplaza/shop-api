@@ -33,7 +33,7 @@ class User(Entity):
 
     def update_data(self, dto):
         for field in self.__dict__.keys():
-            if field in ["_sa_instance_state", "password"]:
+            if field in ["_sa_instance_state", "password", "stripe_id"]:
                 continue
 
             new_value = getattr(dto, field)

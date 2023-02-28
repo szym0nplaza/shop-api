@@ -6,14 +6,14 @@ from modules.users.application.dto import (
     ChangePasswordDTO,
     LoginDTO,
 )
-from .conftest import MockUserRepo, MockAuthModule
+from .conftest import MockUserRepo, MockAuthModule, MockPaymentGateway
 from copy import deepcopy
 from typing import Dict, Any
 from config.settings import POSSIBLE_PERMS
 
 
 class TestUserHandler:
-    _user_handler = UserHandler(repo=MockUserRepo())
+    _user_handler = UserHandler(repo=MockUserRepo(), payments=MockPaymentGateway())
     _auth_handler = AuthHandler(repo=MockUserRepo(), auth=MockAuthModule())
     _data_dict: Dict[str, Any] = {
         "email": "test@testmail.com",

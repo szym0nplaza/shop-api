@@ -1,4 +1,4 @@
-from modules.users.application.intefraces import IUserRepository, IAuthModule
+from modules.users.application.intefraces import IUserRepository, IAuthModule, IPaymentGateway
 from modules.users.domain.models import User, Group
 from typing import List
 
@@ -17,6 +17,9 @@ class MockAuthModule(IAuthModule):
     def create_tokens(self, email: str):
         pass
 
+class MockPaymentGateway(IPaymentGateway):
+    def create_seller_acc(self, user: User):
+        pass
 
 class MockUserRepo(IUserRepository):
     _users_db = []
