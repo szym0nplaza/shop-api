@@ -35,3 +35,9 @@ class IAuthModule(ABC):
     @abstractmethod
     def create_tokens(self, email: str) -> Tuple[str, str]:
         raise NotImplementedError
+
+
+class IPaymentGateway(ABC):
+    @abstractmethod
+    def create_seller_acc(self, user: User):
+        raise NotImplementedError

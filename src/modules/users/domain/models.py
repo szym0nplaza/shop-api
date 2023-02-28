@@ -18,6 +18,7 @@ class User(Entity):
     surname: str
     password: Union[str, bytes]
     group: str
+    stripe_id: Optional[str] = None
     id: Optional[int] = None
 
     def change_password(self, new_password: str):
@@ -37,3 +38,6 @@ class User(Entity):
 
             new_value = getattr(dto, field)
             setattr(self, field, new_value)
+
+    def get_full_name(self) -> str:
+        return f"{self.name} {self.surname}"

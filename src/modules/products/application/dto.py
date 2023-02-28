@@ -26,3 +26,12 @@ class CreateOrderDTO(BaseModel):
     product_id: int
     date: datetime
     status: str
+
+class PaymentDTO(BaseModel):
+    customer_id: int
+    order_id: int
+    currency: str
+    card_number: int
+    exp_month: int
+    exp_year: int
+    cvc: int

@@ -19,6 +19,7 @@ class User(DBSession.base):
     surname = Column(String)
     email = Column(String)
     password = Column(LargeBinary)
+    stripe_id = Column(String, nullable=True)
     group = Column(String, ForeignKey(Group.name), nullable=True)
 
 

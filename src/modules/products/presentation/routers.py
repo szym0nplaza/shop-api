@@ -8,17 +8,25 @@ from modules.products.application.dto import (
     CreateProductDTO,
     OrderDTO,
     CreateOrderDTO,
+    PaymentDTO,
 )
-from modules.products.application.handlers import ProductHandler, OrderHandler
+from modules.products.application.handlers import (
+    ProductHandler,
+    OrderHandler,
+    PaymentHandler,
+)
 from modules.products.infrastructure.repositories import (
     ProductRepository,
     OrderRepository,
 )
+from modules.products.infrastructure.ext import PaymentGateway
+from modules.users.infrastructure.repositories import UserRepository
 from typing import List
 
 
 products_router = APIRouter()
 orders_router = APIRouter()
+payments_router = APIRouter()
 
 
 @products_router.post("/create-product")
@@ -110,7 +118,7 @@ async def update_order(dto: OrderDTO):
     handler = OrderHandler(repo=OrderRepository())
     try:
         handler.udpate_order(dto)
-    except ValueError:
+    except ValueError as e:
         return JSONResponse({"detail": str(e)}, status_code=422)
     return JSONResponse({"message": "Order updated"}, status_code=200)
 
@@ -122,4 +130,19 @@ async def delete_order(id: int):
         handler.delete_order(id)
     except ValueError as e:
         return JSONResponse({"detail": str(e)}, status_code=422)
+    return JSONResponse({"message": "Order updated"}, status_code=200)
+
+
+##########################################
+
+
+@payments_router.post("proceed-payment")
+async def create_payment(dto: PaymentDTO):
+    handler = PaymentHandler(
+        product_repo=ProductRepository(),
+        order_repo=OrderRepository(),
+        user_repo=UserRepository(),
+        payments=PaymentGateway(),
+    )
+    handler.handle_payment(dto)
     return JSONResponse({"message": "Order updated"}, status_code=200)

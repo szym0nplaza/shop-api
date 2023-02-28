@@ -49,5 +49,9 @@ class IOrderRepository(ABC):
 
 class IPaymentGateway(ABC):
     @abstractmethod
-    def handle_payment(self):
+    def create_payment(self, dto, product, customer_name: str):
+        raise NotImplementedError
+    
+    @abstractmethod
+    def confirm_payment(self, seller_stripe_id: str):
         raise NotImplementedError

@@ -1,4 +1,4 @@
-from .intefraces import IUserRepository, IAuthModule
+from .intefraces import IUserRepository, IAuthModule, IPaymentGateway
 from modules.users.domain.models import User
 from modules.users.domain.value_objects import Password
 from .dto import RegisterUserDTO, UserDTO, UpdateUserDTO, ChangePasswordDTO, LoginDTO, GroupDTO
@@ -7,10 +7,15 @@ from typing import List
 
 
 class UserHandler:
-    def __init__(self, repo: IUserRepository) -> None:
+    def __init__(self, repo: IUserRepository, payments: IPaymentGateway) -> None:
         self._repo = repo
+        self._payments = payments
 
     def add_user(self, dto: RegisterUserDTO) -> UserDTO:
+        payment_acc_types = {
+            "seller": self._payments.create_seller_acc,
+        }
+
         with self._repo:
             user = User(
                 email=dto.email,
@@ -19,6 +24,7 @@ class UserHandler:
                 password=Password(dto.password).hashed_value,
                 group=dto.group
             )
+            user = payment_acc_types.get(user.group, (lambda user: user))(user)
             self._repo.add_user(user)
             user = self._repo.get_user_by_email(dto.email)
             return UserDTO(**user.__dict__)

@@ -5,6 +5,7 @@ from fastapi.exceptions import HTTPException
 from modules.users.infrastructure.repositories import UserRepository
 from modules.users.infrastructure.auth import AuthModule
 from modules.users.application.handlers import UserHandler, AuthHandler
+from modules.users.infrastructure.ext import PaymentGateway
 from modules.users.application.dto import (
     RegisterUserDTO,
     UserDTO,
@@ -36,7 +37,7 @@ async def login(dto: LoginDTO):
     dependencies=[Security(check_access, scopes=["view_user"])],
 )
 async def get_user(id: int):
-    handler = UserHandler(repo=UserRepository())
+    handler = UserHandler(repo=UserRepository(), payments=PaymentGateway())
     response = handler.get_user(id)
     return response
 
@@ -71,11 +72,11 @@ async def update_group(dto: GroupDTO):
 
 @router.post("/create-user", response_model=UserDTO)
 async def create_user(dto: RegisterUserDTO):
-    handler = UserHandler(repo=UserRepository())
-    try:
-        response = handler.add_user(dto)
-    except IntegrityError:
-        raise HTTPException(detail="Provided group name not found.", status_code=404)
+    handler = UserHandler(repo=UserRepository(), payments=PaymentGateway())
+    # try:
+    response = handler.add_user(dto)
+    # except IntegrityError:
+    #     raise HTTPException(detail="Provided group name not found.", status_code=404)
     return response
 
 
@@ -85,7 +86,7 @@ async def create_user(dto: RegisterUserDTO):
     dependencies=[Security(check_access, scopes=["manage_user"])],
 )
 async def update_user(dto: UpdateUserDTO):
-    handler = UserHandler(repo=UserRepository())
+    handler = UserHandler(repo=UserRepository(), payments=PaymentGateway())
     response = handler.update_user(dto)
     return response
 
@@ -94,7 +95,7 @@ async def update_user(dto: UpdateUserDTO):
     "/change-password", dependencies=[Security(check_access, scopes=["manage_user"])]
 )
 async def change_password(dto: ChangePasswordDTO):
-    handler = UserHandler(repo=UserRepository())
+    handler = UserHandler(repo=UserRepository(), payments=PaymentGateway())
     try:
         handler.change_password(dto)
         return JSONResponse({"message": "Password changed."}, status_code=200)

@@ -13,11 +13,18 @@ class Status(Enum):
     paid = "paid"
 
 
+class Currency(Enum):
+    usd = "usd"
+    eur = "eur"
+    pln = "pln"
+
+
 @dataclass
 class Product(Entity):
     owner_id: int
     name: str
     price: Decimal
+    currency: Currency
     id: Optional[int] = None
 
     def update_data(self, dto):

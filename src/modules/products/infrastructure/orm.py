@@ -12,6 +12,7 @@ class Product(DBSession.base):
     owner_id = Column(Integer, ForeignKey(User.id))
     name = Column(String)
     price = Column(DECIMAL(precision=15, scale=2))
+    currency = Column(String)
 
 
 class Order(DBSession.base):
