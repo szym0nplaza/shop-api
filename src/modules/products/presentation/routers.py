@@ -136,7 +136,7 @@ async def delete_order(id: int):
 ##########################################
 
 
-@payments_router.post("proceed-payment")
+@payments_router.post("/proceed-payment")
 async def create_payment(dto: PaymentDTO):
     handler = PaymentHandler(
         product_repo=ProductRepository(),

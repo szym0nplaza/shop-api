@@ -7,12 +7,14 @@ class CreateProductDTO(BaseModel):
     owner_id: int
     name: str
     price: Decimal
+    currency: str
 
 class ProductDTO(BaseModel):
     id: int
     name: str
     price: Decimal
     owner_id: int
+    currency: str
 
 class OrderDTO(BaseModel):
     id: int
